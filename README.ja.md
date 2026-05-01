@@ -41,12 +41,12 @@ tail -n 80 "$HOME/Library/Logs/session-tide/session-tide.log"
 
 ## モデル指定
 
-デフォルトでは、それぞれのCLIのデフォルトモデルを使います。軽量モデルを使いたい場合は、環境変数で指定できます。
+デフォルトでは、それぞれのCLIのデフォルトモデルとデフォルトeffort levelを使います。軽量モデルや低いeffort levelを使いたい場合は、環境変数で指定できます。
 
 手動実行時だけ指定する例:
 
 ```zsh
-SESSION_TIDE_CLAUDE_MODEL=haiku SESSION_TIDE_CODEX_MODEL=<codex-model> ./scripts/session-tide.zsh
+SESSION_TIDE_CLAUDE_MODEL=haiku SESSION_TIDE_CLAUDE_EFFORT=low SESSION_TIDE_CODEX_MODEL=<codex-model> SESSION_TIDE_CODEX_EFFORT=low ./scripts/session-tide.zsh
 ```
 
 `launchd` の定時実行で使う場合は、`~/.config/session-tide/config` を作成します。
@@ -60,10 +60,12 @@ $EDITOR "$HOME/.config/session-tide/config"
 
 ```zsh
 SESSION_TIDE_CLAUDE_MODEL=haiku
+SESSION_TIDE_CLAUDE_EFFORT=low
 SESSION_TIDE_CODEX_MODEL=<codex-model>
+SESSION_TIDE_CODEX_EFFORT=low
 ```
 
-モデル名は、インストール済みの `claude` / `codex` CLI が受け付けるものを指定してください。
+モデル名とeffort levelは、インストール済みの `claude` / `codex` CLI が受け付けるものを指定してください。
 
 ログの `reason` は以下のように分類されます。
 

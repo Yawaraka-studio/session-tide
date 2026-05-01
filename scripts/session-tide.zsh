@@ -31,8 +31,14 @@ load_config() {
       SESSION_TIDE_CLAUDE_MODEL)
         SESSION_TIDE_CLAUDE_MODEL="$value"
         ;;
+      SESSION_TIDE_CLAUDE_EFFORT)
+        SESSION_TIDE_CLAUDE_EFFORT="$value"
+        ;;
       SESSION_TIDE_CODEX_MODEL)
         SESSION_TIDE_CODEX_MODEL="$value"
+        ;;
+      SESSION_TIDE_CODEX_EFFORT)
+        SESSION_TIDE_CODEX_EFFORT="$value"
         ;;
       *)
         log "config: ignored key=$key"
@@ -154,6 +160,14 @@ run_claude() {
     log "claude: model=cli_default"
   fi
 
+  local effort_args=()
+  if [[ -n "${SESSION_TIDE_CLAUDE_EFFORT:-}" ]]; then
+    effort_args=(--effort "$SESSION_TIDE_CLAUDE_EFFORT")
+    log "claude: effort=$SESSION_TIDE_CLAUDE_EFFORT"
+  else
+    log "claude: effort=cli_default"
+  fi
+
   run_with_timeout "claude" "$PROMPT" \
     "$claude_bin" \
     --print \
@@ -161,6 +175,7 @@ run_claude() {
     --permission-mode dontAsk \
     --disable-slash-commands \
     "${model_args[@]}" \
+    "${effort_args[@]}" \
     --tools ""
 }
 
@@ -181,11 +196,20 @@ run_codex() {
     log "codex: model=cli_default"
   fi
 
+  local effort_args=()
+  if [[ -n "${SESSION_TIDE_CODEX_EFFORT:-}" ]]; then
+    effort_args=(-c "model_reasoning_effort=\"$SESSION_TIDE_CODEX_EFFORT\"")
+    log "codex: effort=$SESSION_TIDE_CODEX_EFFORT"
+  else
+    log "codex: effort=cli_default"
+  fi
+
   run_with_timeout "codex" "" \
     "$codex_bin" \
     --ask-for-approval never \
     exec \
     "${model_args[@]}" \
+    "${effort_args[@]}" \
     --skip-git-repo-check \
     --sandbox read-only \
     --cd "$WORK_DIR" \

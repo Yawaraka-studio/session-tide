@@ -43,12 +43,12 @@ tail -n 80 "$HOME/Library/Logs/session-tide/session-tide.log"
 
 ## Model Selection
 
-By default, `session-tide` uses each CLI's default model. You can optionally choose lighter models with environment variables.
+By default, `session-tide` uses each CLI's default model and effort level. You can optionally choose lighter models and lower effort levels with environment variables.
 
 For one manual run:
 
 ```zsh
-SESSION_TIDE_CLAUDE_MODEL=haiku SESSION_TIDE_CODEX_MODEL=<codex-model> ./scripts/session-tide.zsh
+SESSION_TIDE_CLAUDE_MODEL=haiku SESSION_TIDE_CLAUDE_EFFORT=low SESSION_TIDE_CODEX_MODEL=<codex-model> SESSION_TIDE_CODEX_EFFORT=low ./scripts/session-tide.zsh
 ```
 
 For scheduled `launchd` runs, create `~/.config/session-tide/config`:
@@ -62,10 +62,12 @@ Example:
 
 ```zsh
 SESSION_TIDE_CLAUDE_MODEL=haiku
+SESSION_TIDE_CLAUDE_EFFORT=low
 SESSION_TIDE_CODEX_MODEL=<codex-model>
+SESSION_TIDE_CODEX_EFFORT=low
 ```
 
-Use model names accepted by your installed `claude` and `codex` CLIs.
+Use model names and effort levels accepted by your installed `claude` and `codex` CLIs.
 
 Log entries include a `reason` field:
 
