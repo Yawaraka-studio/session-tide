@@ -45,9 +45,11 @@ classify_output() {
   local output="$1"
   local exit_status="$2"
 
-  if (( exit_status == 124 )); then
+  if (( exit_status == 0 )); then
+    print -r -- "ok"
+  elif (( exit_status == 124 )); then
     print -r -- "timeout"
-  elif print -r -- "$output" | grep -Eiq 'usage limit|rate limit|quota|limit reached|too many requests|429|weekly limit|5.?hour'; then
+  elif print -r -- "$output" | grep -Eiq 'usage limit|rate limit|quota|limit reached|too many requests|429|weekly limit|5.?hour|hit your limit|resets .* at'; then
     print -r -- "usage_limit"
   elif print -r -- "$output" | grep -Eiq 'auth|authentication|authorize|login|not logged in|api key|token|credential|unauthorized|forbidden|401|403'; then
     print -r -- "auth"
@@ -55,8 +57,6 @@ classify_output() {
     print -r -- "network"
   elif print -r -- "$output" | grep -Eiq 'permission denied|operation not permitted|not allowed|approval|required permission'; then
     print -r -- "permission"
-  elif (( exit_status == 0 )); then
-    print -r -- "ok"
   else
     print -r -- "unknown"
   fi
@@ -80,7 +80,8 @@ log_output_block() {
 
 run_with_timeout() {
   local name="$1"
-  shift
+  local stdin_input="$2"
+  shift 2
 
   log "$name: start"
 
@@ -88,7 +89,11 @@ run_with_timeout() {
   output_file="$(mktemp "${TMPDIR:-/tmp}/session-tide.${name}.XXXXXX")"
 
   {
-    "$@"
+    if [[ -n "$stdin_input" ]]; then
+      print -r -- "$stdin_input" | "$@"
+    else
+      "$@" < /dev/null
+    fi
   } > "$output_file" 2>&1 &
 
   local pid=$!
@@ -149,15 +154,14 @@ run_claude() {
     log "claude: model=cli_default"
   fi
 
-  run_with_timeout "claude" \
+  run_with_timeout "claude" "$PROMPT" \
     "$claude_bin" \
     --print \
     --output-format text \
     --permission-mode dontAsk \
     --disable-slash-commands \
-    --tools "" \
     "${model_args[@]}" \
-    "$PROMPT"
+    --tools ""
 }
 
 run_codex() {
@@ -177,13 +181,13 @@ run_codex() {
     log "codex: model=cli_default"
   fi
 
-  run_with_timeout "codex" \
+  run_with_timeout "codex" "" \
     "$codex_bin" \
+    --ask-for-approval never \
     exec \
     "${model_args[@]}" \
     --skip-git-repo-check \
     --sandbox read-only \
-    --ask-for-approval never \
     --cd "$WORK_DIR" \
     "$PROMPT"
 }
