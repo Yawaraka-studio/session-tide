@@ -3,7 +3,7 @@ set -u
 
 PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.local/bin"
 
-readonly PROMPT='セッション準備です。返答は「OK」だけにしてください。ファイル操作・コマンド実行・外部通信は不要です。'
+readonly PROMPT='Session setup. Reply with "OK" only. No file edits, command execution, or external network access.'
 readonly CONFIG_FILE="$HOME/.config/session-tide/config"
 readonly LOG_DIR="$HOME/Library/Logs/session-tide"
 readonly LOG_FILE="$LOG_DIR/session-tide.log"
