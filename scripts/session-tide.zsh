@@ -17,6 +17,16 @@ log() {
   print -r -- "[$(date '+%Y-%m-%d %H:%M:%S %z')] $*" >> "$LOG_FILE"
 }
 
+network_available() {
+  if command -v scutil >/dev/null 2>&1; then
+    scutil -r api.anthropic.com 2>/dev/null | grep -Eq '^Reachable([[:space:]]|$)' && return 0
+    scutil -r api.openai.com 2>/dev/null | grep -Eq '^Reachable([[:space:]]|$)' && return 0
+    return 1
+  fi
+
+  return 0
+}
+
 load_config() {
   [[ -f "$CONFIG_FILE" ]] || return 0
 
@@ -219,6 +229,12 @@ run_codex() {
 main() {
   log "session-tide: begin"
   load_config
+
+  if ! network_available; then
+    log "session-tide: skipped reason=network detail=api_hosts_unreachable"
+    log "session-tide: end"
+    return 0
+  fi
 
   caffeinate -dimsu -t "$CAFFEINATE_SECONDS" &
   local caffeinate_pid=$!

@@ -14,6 +14,7 @@ This is not intended for bulk automated usage, heavy prompts, or rate-limit bypa
 - Runs Claude Code non-interactively with tools disabled.
 - Runs Codex CLI non-interactively with a read-only sandbox and no approvals.
 - Continues to the next CLI even if one command fails.
+- Skips CLI execution with a `network` reason when the Mac is offline.
 - Uses `caffeinate` to prevent sleep only while the check is running.
 - Writes logs to `~/Library/Logs/session-tide/session-tide.log`.
 
@@ -99,6 +100,8 @@ MIT
 ## Sleep Behavior
 
 If your Mac is asleep, `launchd` may not run the job at the scheduled time. If needed, combine this with macOS power scheduling.
+
+This tool sends lightweight connectivity checks through Claude Code and Codex CLI, so the Mac must be connected to the network when the job runs. When offline, it skips AI CLI execution and records `reason=network` in the log.
 
 Example:
 
