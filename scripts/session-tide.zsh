@@ -220,6 +220,12 @@ run_codex() {
     exec \
     "${model_args[@]}" \
     "${effort_args[@]}" \
+    --ignore-user-config \
+    --ignore-rules \
+    --ephemeral \
+    --disable general_analytics \
+    --disable plugins \
+    --disable shell_snapshot \
     --skip-git-repo-check \
     --sandbox read-only \
     --cd "$WORK_DIR" \

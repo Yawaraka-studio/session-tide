@@ -12,7 +12,7 @@ This is not intended for bulk automated usage, heavy prompts, or rate-limit bypa
 
 - Sends a short prompt and asks the CLI to reply with only `OK`.
 - Runs Claude Code non-interactively with tools disabled.
-- Runs Codex CLI non-interactively with a read-only sandbox and no approvals.
+- Runs Codex CLI non-interactively with a read-only sandbox, no approvals, and a minimal ephemeral session.
 - Continues to the next CLI even if one command fails.
 - Skips CLI execution with a `network` reason when the Mac is offline.
 - Uses `caffeinate` to prevent sleep only while the check is running.
