@@ -19,8 +19,8 @@ log() {
 
 network_available() {
   if command -v scutil >/dev/null 2>&1; then
-    scutil -r api.anthropic.com 2>/dev/null | grep -Eq '^Reachable([[:space:]]|$)' && return 0
-    scutil -r api.openai.com 2>/dev/null | grep -Eq '^Reachable([[:space:]]|$)' && return 0
+    scutil -r api.anthropic.com 2>/dev/null | grep -Eq '^Reachable([,[:space:]]|$)' && return 0
+    scutil -r api.openai.com 2>/dev/null | grep -Eq '^Reachable([,[:space:]]|$)' && return 0
     return 1
   fi
 
